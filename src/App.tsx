@@ -1,27 +1,39 @@
-interface Course {
-  title?: string;
-  part?: string;
-  numberExercises?: number;
-  totalNumberExercises?: number;
+import React from "react"
+
+interface HeaderProps {
+  name: string
 }
 
-const Header = ({ title }: Course) => {
+interface Parts {
+  parts:  { 
+    part: string
+    numberExercises: number
+  } []
+}
+
+interface SinglePart {
+    part: string
+    numberExercises: number
+}
+
+const Header: React.FC<HeaderProps> = ({name}) => {
   return(
     <>
-    <h1>{title}</h1>
+    <h1>{name}</h1>
     </>
   )
 }
 
-const Total = ({totalNumberExercises}: Course) => {
+const Total: React.FC<Parts> = ({parts}) => {
   return(
     <>
-      <p>Number of exercises {totalNumberExercises}</p>
+      <p>Number of exercises {parts.reduce((previousValue: number, currentValue) => previousValue + currentValue.numberExercises, 0)}</p>
+
     </>  
   ) 
 }
 
-const Part = ({part, numberExercises}: Course) => {
+const Part: React.FC<SinglePart> = ({part, numberExercises}) => {
   return(
     <>
       <p>
@@ -31,39 +43,42 @@ const Part = ({part, numberExercises}: Course) => {
   ) 
 }
 
-const Content = ({course}: {course: Course[]}) => {
+const Content: React.FC<Parts> = ({parts}) => {
+  console.log(parts)
   return(
     <>
-      {course.map((course: any) => (
-        <Part key={course.part} part={course.part} numberExercises={course.numberExercises} />
-      ))}
+      {parts.map((singlePart: SinglePart) => {
+        return <Part part={singlePart.part} numberExercises={singlePart.numberExercises}/>
+      })}
     </>
   ) 
 }
 
 const App = () => {
-  const courseTitle = 'Desenvolvimento de aplicação Half Stack'
 
-  const content = [
-    {
-      part: 'Fundamentos da biblioteca React',
-      numberExercises: 10
-    },
-    {
-      part: 'Usando props para passar dados',
-      numberExercises: 7
-    },
-    {
-      part: 'Estado de um componente',
-      numberExercises: 14
-    }
-  ]
+  const course = {
+    name: 'Desenvolvimento de aplicação Half Stack',
+    parts: [
+      {
+        part: 'Fundamentos da biblioteca React',
+        numberExercises: 10
+      },
+      {
+        part: 'Usando props para passar dados',
+        numberExercises: 7
+      },
+      {
+        part: 'Estado de um componente',
+        numberExercises: 14
+      }
+    ]
+  }
 
   return (
     <div>
-      <Header title={courseTitle}/>
-      <Content course={content}/>
-      <Total totalNumberExercises={10+7+14}/>
+      <Header name={course.name} />
+      <Content parts={course.parts}/>
+      <Total parts={course.parts}/>
     </div>
   )
 }
